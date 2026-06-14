@@ -1,5 +1,3 @@
-import serverModule from "../src/server";
-
 function headersFromNode(req: import("http").IncomingMessage): Headers {
   const headers = new Headers();
   for (const [key, value] of Object.entries(req.headers)) {
@@ -32,7 +30,10 @@ export default async function handler(req: import("http").IncomingMessage, res: 
     body: await getRequestBody(req),
   });
 
-  const response = await serverModule.default.fetch(request, {}, undefined);
+  const serverModule = await import("../dist/server/server.js");
+  const serverEntry = serverModule.default ?? serverModule;
+  const response = await serverEntry.fetch(request, {}, undefined);
+
   res.statusCode = response.status;
 
   response.headers.forEach((value, key) => {
