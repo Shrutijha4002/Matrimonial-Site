@@ -30,7 +30,7 @@ export default async function handler(req: import("http").IncomingMessage, res: 
     body: await getRequestBody(req),
   });
 
-  const serverModule = await import("../dist/server/server.js");
+  const serverModule = await import("../src/server");
   const serverEntry = serverModule.default ?? serverModule;
   const response = await serverEntry.fetch(request, {}, undefined);
 
