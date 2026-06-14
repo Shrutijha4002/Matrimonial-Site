@@ -8,7 +8,19 @@
   ],
   "routes": [
     {
-      "src": "/(.*)",
+      "src": "^/assets/(.*)$",
+      "dest": "/dist/client/assets/$1"
+    },
+    {
+      "src": "^/favicon\.png$",
+      "dest": "/dist/client/assets/favicon.png"
+    },
+    {
+      "src": "^/favicon\.ico$",
+      "dest": "/dist/client/assets/favicon.ico"
+    },
+    {
+      "src": "^/(.*)$",
       "dest": "/api/index.js"
     }
   ]
