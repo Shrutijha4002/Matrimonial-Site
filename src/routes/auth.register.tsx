@@ -1,12 +1,13 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { Mail, Lock, User } from "lucide-react";
-import { type FormEvent } from "react";
+import { Mail, Lock, User, Phone } from "lucide-react";
+import { useState, type FormEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 import { AuthShell } from "./auth.sign-in";
+import { useStore } from "@/lib/store";
 
 export const Route = createFileRoute("/auth/register")({
   head: () => ({ meta: [{ title: "Create Account — Sangam Matrimony" }] }),
@@ -15,11 +16,29 @@ export const Route = createFileRoute("/auth/register")({
 
 function Register() {
   const navigate = useNavigate();
+  const { register } = useStore();
+  const [profileFor, setProfileFor] = useState("self");
+  const [gender, setGender] = useState("female");
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [password, setPassword] = useState("");
+
   const onSubmit = (e: FormEvent) => {
     e.preventDefault();
-    toast.success("Account created!", { description: "Verify your number to continue." });
-    navigate({ to: "/auth/verify-otp" });
+    if (password.length < 6) {
+      toast.error("Password must be at least 6 characters");
+      return;
+    }
+    if (phone.length < 10) {
+      toast.error("Please enter a valid phone number");
+      return;
+    }
+    register({ email, password, name, gender: gender as "male" | "female", profileFor: profileFor as "self" | "son" | "daughter" | "sibling", phone });
+    toast.success("Account created!", { description: "Welcome to Sangam!" });
+    navigate({ to: "/dashboard" });
   };
+
   return (
     <AuthShell
       title="Create your free account"
@@ -30,7 +49,7 @@ function Register() {
         <div className="grid grid-cols-2 gap-3">
           <div className="space-y-1.5">
             <Label>Profile for</Label>
-            <Select defaultValue="self">
+            <Select value={profileFor} onValueChange={setProfileFor}>
               <SelectTrigger><SelectValue /></SelectTrigger>
               <SelectContent>
                 <SelectItem value="self">Myself</SelectItem>
@@ -42,7 +61,7 @@ function Register() {
           </div>
           <div className="space-y-1.5">
             <Label>Gender</Label>
-            <Select defaultValue="female">
+            <Select value={gender} onValueChange={setGender}>
               <SelectTrigger><SelectValue /></SelectTrigger>
               <SelectContent>
                 <SelectItem value="female">Female</SelectItem>
@@ -56,21 +75,30 @@ function Register() {
           <Label htmlFor="name">Full name</Label>
           <div className="relative">
             <User className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <Input id="name" required placeholder="e.g. Aanya Sharma" className="pl-9 h-11" />
+            <Input id="name" value={name} onChange={e => setName(e.target.value)} required placeholder="e.g. Aanya Sharma" className="pl-9 h-11" />
           </div>
         </div>
-        <div className="space-y-1.5">
-          <Label htmlFor="email">Email</Label>
-          <div className="relative">
-            <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <Input id="email" type="email" required placeholder="you@example.com" className="pl-9 h-11" />
+        <div className="grid grid-cols-2 gap-3">
+          <div className="space-y-1.5">
+            <Label htmlFor="email">Email</Label>
+            <div className="relative">
+              <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <Input id="email" type="email" value={email} onChange={e => setEmail(e.target.value)} required placeholder="you@example.com" className="pl-9 h-11" />
+            </div>
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="phone">Phone number</Label>
+            <div className="relative">
+              <Phone className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <Input id="phone" type="tel" value={phone} onChange={e => setPhone(e.target.value)} required placeholder="9876543210" className="pl-9 h-11" />
+            </div>
           </div>
         </div>
         <div className="space-y-1.5">
           <Label htmlFor="password">Password</Label>
           <div className="relative">
             <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <Input id="password" type="password" required placeholder="At least 8 characters" className="pl-9 h-11" />
+            <Input id="password" type="password" value={password} onChange={e => setPassword(e.target.value)} required placeholder="At least 6 characters" className="pl-9 h-11" />
           </div>
         </div>
 

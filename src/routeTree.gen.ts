@@ -11,6 +11,9 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SuccessStoriesRouteImport } from './routes/success-stories'
 import { Route as ShortlistRouteImport } from './routes/shortlist'
+import { Route as SafetyRouteImport } from './routes/safety'
+import { Route as ReportAbuseRouteImport } from './routes/report-abuse'
+import { Route as PressRouteImport } from './routes/press'
 import { Route as NotificationsRouteImport } from './routes/notifications'
 import { Route as MembershipRouteImport } from './routes/membership'
 import { Route as InterestsRouteImport } from './routes/interests'
@@ -18,9 +21,14 @@ import { Route as HelpRouteImport } from './routes/help'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as ChatRouteImport } from './routes/chat'
+import { Route as CareersRouteImport } from './routes/careers'
 import { Route as BrowseRouteImport } from './routes/browse'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as SocialYoutubeRouteImport } from './routes/social.youtube'
+import { Route as SocialTwitterRouteImport } from './routes/social.twitter'
+import { Route as SocialInstagramRouteImport } from './routes/social.instagram'
+import { Route as SocialFacebookRouteImport } from './routes/social.facebook'
 import { Route as ProfileEditRouteImport } from './routes/profile.edit'
 import { Route as ProfileCreateRouteImport } from './routes/profile.create'
 import { Route as ProfileIdRouteImport } from './routes/profile.$id'
@@ -41,6 +49,21 @@ const SuccessStoriesRoute = SuccessStoriesRouteImport.update({
 const ShortlistRoute = ShortlistRouteImport.update({
   id: '/shortlist',
   path: '/shortlist',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SafetyRoute = SafetyRouteImport.update({
+  id: '/safety',
+  path: '/safety',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ReportAbuseRoute = ReportAbuseRouteImport.update({
+  id: '/report-abuse',
+  path: '/report-abuse',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PressRoute = PressRouteImport.update({
+  id: '/press',
+  path: '/press',
   getParentRoute: () => rootRouteImport,
 } as any)
 const NotificationsRoute = NotificationsRouteImport.update({
@@ -78,6 +101,11 @@ const ChatRoute = ChatRouteImport.update({
   path: '/chat',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CareersRoute = CareersRouteImport.update({
+  id: '/careers',
+  path: '/careers',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const BrowseRoute = BrowseRouteImport.update({
   id: '/browse',
   path: '/browse',
@@ -91,6 +119,26 @@ const AboutRoute = AboutRouteImport.update({
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SocialYoutubeRoute = SocialYoutubeRouteImport.update({
+  id: '/social/youtube',
+  path: '/social/youtube',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SocialTwitterRoute = SocialTwitterRouteImport.update({
+  id: '/social/twitter',
+  path: '/social/twitter',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SocialInstagramRoute = SocialInstagramRouteImport.update({
+  id: '/social/instagram',
+  path: '/social/instagram',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SocialFacebookRoute = SocialFacebookRouteImport.update({
+  id: '/social/facebook',
+  path: '/social/facebook',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ProfileEditRoute = ProfileEditRouteImport.update({
@@ -153,6 +201,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/browse': typeof BrowseRoute
+  '/careers': typeof CareersRoute
   '/chat': typeof ChatRoute
   '/contact': typeof ContactRoute
   '/dashboard': typeof DashboardRoute
@@ -160,6 +209,9 @@ export interface FileRoutesByFullPath {
   '/interests': typeof InterestsRoute
   '/membership': typeof MembershipRoute
   '/notifications': typeof NotificationsRoute
+  '/press': typeof PressRoute
+  '/report-abuse': typeof ReportAbuseRoute
+  '/safety': typeof SafetyRoute
   '/shortlist': typeof ShortlistRoute
   '/success-stories': typeof SuccessStoriesRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
@@ -173,11 +225,16 @@ export interface FileRoutesByFullPath {
   '/profile/$id': typeof ProfileIdRoute
   '/profile/create': typeof ProfileCreateRoute
   '/profile/edit': typeof ProfileEditRoute
+  '/social/facebook': typeof SocialFacebookRoute
+  '/social/instagram': typeof SocialInstagramRoute
+  '/social/twitter': typeof SocialTwitterRoute
+  '/social/youtube': typeof SocialYoutubeRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/browse': typeof BrowseRoute
+  '/careers': typeof CareersRoute
   '/chat': typeof ChatRoute
   '/contact': typeof ContactRoute
   '/dashboard': typeof DashboardRoute
@@ -185,6 +242,9 @@ export interface FileRoutesByTo {
   '/interests': typeof InterestsRoute
   '/membership': typeof MembershipRoute
   '/notifications': typeof NotificationsRoute
+  '/press': typeof PressRoute
+  '/report-abuse': typeof ReportAbuseRoute
+  '/safety': typeof SafetyRoute
   '/shortlist': typeof ShortlistRoute
   '/success-stories': typeof SuccessStoriesRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
@@ -198,12 +258,17 @@ export interface FileRoutesByTo {
   '/profile/$id': typeof ProfileIdRoute
   '/profile/create': typeof ProfileCreateRoute
   '/profile/edit': typeof ProfileEditRoute
+  '/social/facebook': typeof SocialFacebookRoute
+  '/social/instagram': typeof SocialInstagramRoute
+  '/social/twitter': typeof SocialTwitterRoute
+  '/social/youtube': typeof SocialYoutubeRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/browse': typeof BrowseRoute
+  '/careers': typeof CareersRoute
   '/chat': typeof ChatRoute
   '/contact': typeof ContactRoute
   '/dashboard': typeof DashboardRoute
@@ -211,6 +276,9 @@ export interface FileRoutesById {
   '/interests': typeof InterestsRoute
   '/membership': typeof MembershipRoute
   '/notifications': typeof NotificationsRoute
+  '/press': typeof PressRoute
+  '/report-abuse': typeof ReportAbuseRoute
+  '/safety': typeof SafetyRoute
   '/shortlist': typeof ShortlistRoute
   '/success-stories': typeof SuccessStoriesRoute
   '/auth/forgot-password': typeof AuthForgotPasswordRoute
@@ -224,6 +292,10 @@ export interface FileRoutesById {
   '/profile/$id': typeof ProfileIdRoute
   '/profile/create': typeof ProfileCreateRoute
   '/profile/edit': typeof ProfileEditRoute
+  '/social/facebook': typeof SocialFacebookRoute
+  '/social/instagram': typeof SocialInstagramRoute
+  '/social/twitter': typeof SocialTwitterRoute
+  '/social/youtube': typeof SocialYoutubeRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -231,6 +303,7 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/browse'
+    | '/careers'
     | '/chat'
     | '/contact'
     | '/dashboard'
@@ -238,6 +311,9 @@ export interface FileRouteTypes {
     | '/interests'
     | '/membership'
     | '/notifications'
+    | '/press'
+    | '/report-abuse'
+    | '/safety'
     | '/shortlist'
     | '/success-stories'
     | '/auth/forgot-password'
@@ -251,11 +327,16 @@ export interface FileRouteTypes {
     | '/profile/$id'
     | '/profile/create'
     | '/profile/edit'
+    | '/social/facebook'
+    | '/social/instagram'
+    | '/social/twitter'
+    | '/social/youtube'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/about'
     | '/browse'
+    | '/careers'
     | '/chat'
     | '/contact'
     | '/dashboard'
@@ -263,6 +344,9 @@ export interface FileRouteTypes {
     | '/interests'
     | '/membership'
     | '/notifications'
+    | '/press'
+    | '/report-abuse'
+    | '/safety'
     | '/shortlist'
     | '/success-stories'
     | '/auth/forgot-password'
@@ -276,11 +360,16 @@ export interface FileRouteTypes {
     | '/profile/$id'
     | '/profile/create'
     | '/profile/edit'
+    | '/social/facebook'
+    | '/social/instagram'
+    | '/social/twitter'
+    | '/social/youtube'
   id:
     | '__root__'
     | '/'
     | '/about'
     | '/browse'
+    | '/careers'
     | '/chat'
     | '/contact'
     | '/dashboard'
@@ -288,6 +377,9 @@ export interface FileRouteTypes {
     | '/interests'
     | '/membership'
     | '/notifications'
+    | '/press'
+    | '/report-abuse'
+    | '/safety'
     | '/shortlist'
     | '/success-stories'
     | '/auth/forgot-password'
@@ -301,12 +393,17 @@ export interface FileRouteTypes {
     | '/profile/$id'
     | '/profile/create'
     | '/profile/edit'
+    | '/social/facebook'
+    | '/social/instagram'
+    | '/social/twitter'
+    | '/social/youtube'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
   BrowseRoute: typeof BrowseRoute
+  CareersRoute: typeof CareersRoute
   ChatRoute: typeof ChatRoute
   ContactRoute: typeof ContactRoute
   DashboardRoute: typeof DashboardRoute
@@ -314,6 +411,9 @@ export interface RootRouteChildren {
   InterestsRoute: typeof InterestsRoute
   MembershipRoute: typeof MembershipRoute
   NotificationsRoute: typeof NotificationsRoute
+  PressRoute: typeof PressRoute
+  ReportAbuseRoute: typeof ReportAbuseRoute
+  SafetyRoute: typeof SafetyRoute
   ShortlistRoute: typeof ShortlistRoute
   SuccessStoriesRoute: typeof SuccessStoriesRoute
   AuthForgotPasswordRoute: typeof AuthForgotPasswordRoute
@@ -327,6 +427,10 @@ export interface RootRouteChildren {
   ProfileIdRoute: typeof ProfileIdRoute
   ProfileCreateRoute: typeof ProfileCreateRoute
   ProfileEditRoute: typeof ProfileEditRoute
+  SocialFacebookRoute: typeof SocialFacebookRoute
+  SocialInstagramRoute: typeof SocialInstagramRoute
+  SocialTwitterRoute: typeof SocialTwitterRoute
+  SocialYoutubeRoute: typeof SocialYoutubeRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -343,6 +447,27 @@ declare module '@tanstack/react-router' {
       path: '/shortlist'
       fullPath: '/shortlist'
       preLoaderRoute: typeof ShortlistRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/safety': {
+      id: '/safety'
+      path: '/safety'
+      fullPath: '/safety'
+      preLoaderRoute: typeof SafetyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/report-abuse': {
+      id: '/report-abuse'
+      path: '/report-abuse'
+      fullPath: '/report-abuse'
+      preLoaderRoute: typeof ReportAbuseRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/press': {
+      id: '/press'
+      path: '/press'
+      fullPath: '/press'
+      preLoaderRoute: typeof PressRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/notifications': {
@@ -394,6 +519,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ChatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/careers': {
+      id: '/careers'
+      path: '/careers'
+      fullPath: '/careers'
+      preLoaderRoute: typeof CareersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/browse': {
       id: '/browse'
       path: '/browse'
@@ -413,6 +545,34 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/social/youtube': {
+      id: '/social/youtube'
+      path: '/social/youtube'
+      fullPath: '/social/youtube'
+      preLoaderRoute: typeof SocialYoutubeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/social/twitter': {
+      id: '/social/twitter'
+      path: '/social/twitter'
+      fullPath: '/social/twitter'
+      preLoaderRoute: typeof SocialTwitterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/social/instagram': {
+      id: '/social/instagram'
+      path: '/social/instagram'
+      fullPath: '/social/instagram'
+      preLoaderRoute: typeof SocialInstagramRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/social/facebook': {
+      id: '/social/facebook'
+      path: '/social/facebook'
+      fullPath: '/social/facebook'
+      preLoaderRoute: typeof SocialFacebookRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/profile/edit': {
@@ -499,6 +659,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
   BrowseRoute: BrowseRoute,
+  CareersRoute: CareersRoute,
   ChatRoute: ChatRoute,
   ContactRoute: ContactRoute,
   DashboardRoute: DashboardRoute,
@@ -506,6 +667,9 @@ const rootRouteChildren: RootRouteChildren = {
   InterestsRoute: InterestsRoute,
   MembershipRoute: MembershipRoute,
   NotificationsRoute: NotificationsRoute,
+  PressRoute: PressRoute,
+  ReportAbuseRoute: ReportAbuseRoute,
+  SafetyRoute: SafetyRoute,
   ShortlistRoute: ShortlistRoute,
   SuccessStoriesRoute: SuccessStoriesRoute,
   AuthForgotPasswordRoute: AuthForgotPasswordRoute,
@@ -519,6 +683,10 @@ const rootRouteChildren: RootRouteChildren = {
   ProfileIdRoute: ProfileIdRoute,
   ProfileCreateRoute: ProfileCreateRoute,
   ProfileEditRoute: ProfileEditRoute,
+  SocialFacebookRoute: SocialFacebookRoute,
+  SocialInstagramRoute: SocialInstagramRoute,
+  SocialTwitterRoute: SocialTwitterRoute,
+  SocialYoutubeRoute: SocialYoutubeRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

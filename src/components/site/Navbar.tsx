@@ -1,7 +1,8 @@
-import { Link } from "@tanstack/react-router";
-import { Heart, Menu, X } from "lucide-react";
+import { Link, useNavigate } from "@tanstack/react-router";
+import { Heart, Menu, X, LogOut, Bell, User } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { useStore } from "@/lib/store";
 
 const links = [
   { label: "Browse", to: "/browse" },
@@ -12,8 +13,24 @@ const links = [
   { label: "Contact", to: "/contact" },
 ] as const;
 
+const authedLinks = [
+  { label: "Browse", to: "/browse" },
+  { label: "Dashboard", to: "/dashboard" },
+  { label: "Messages", to: "/chat" },
+  { label: "Membership", to: "/membership" },
+] as const;
+
 export function Navbar() {
   const [open, setOpen] = useState(false);
+  const { state: { user }, logout, unreadCount } = useStore();
+  const navigate = useNavigate();
+  const navLinks = user ? authedLinks : links;
+
+  const handleLogout = () => {
+    logout();
+    navigate({ to: "/" });
+  };
+
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/60 bg-background/80 backdrop-blur-xl">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
@@ -27,7 +44,7 @@ export function Navbar() {
         </Link>
 
         <nav className="hidden items-center gap-6 lg:flex">
-          {links.map((l) => (
+          {navLinks.map((l) => (
             <Link
               key={l.label}
               to={l.to}
@@ -40,12 +57,29 @@ export function Navbar() {
         </nav>
 
         <div className="hidden items-center gap-2 lg:flex">
-          <Button variant="ghost" size="sm" asChild>
-            <Link to="/auth/sign-in">Sign in</Link>
-          </Button>
-          <Button size="sm" className="bg-gradient-primary shadow-glow hover:opacity-95" asChild>
-            <Link to="/auth/register">Register Free</Link>
-          </Button>
+          {user ? (
+            <>
+              <Link to="/notifications" className="relative mr-1 text-muted-foreground hover:text-foreground">
+                <Bell className="h-5 w-5" />
+                {unreadCount > 0 && <span className="absolute -right-1 -top-1 grid h-4 min-w-4 place-items-center rounded-full bg-primary px-1 text-[9px] font-bold text-primary-foreground">{unreadCount}</span>}
+              </Link>
+              <Link to="/profile/edit" className="flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground">
+                <User className="h-4 w-4" /> {user.name.split(" ")[0]}
+              </Link>
+              <Button variant="ghost" size="icon" onClick={handleLogout} aria-label="Sign out">
+                <LogOut className="h-4 w-4" />
+              </Button>
+            </>
+          ) : (
+            <>
+              <Button variant="ghost" size="sm" asChild>
+                <Link to="/auth/sign-in">Sign in</Link>
+              </Button>
+              <Button size="sm" className="bg-gradient-primary shadow-glow hover:opacity-95" asChild>
+                <Link to="/auth/register">Register Free</Link>
+              </Button>
+            </>
+          )}
         </div>
 
         <button
@@ -60,7 +94,7 @@ export function Navbar() {
       {open && (
         <div className="border-t border-border bg-background lg:hidden">
           <div className="mx-auto flex max-w-7xl flex-col gap-1 px-4 py-3">
-            {links.map((l) => (
+            {navLinks.map((l) => (
               <Link
                 key={l.label}
                 to={l.to}
@@ -70,14 +104,22 @@ export function Navbar() {
                 {l.label}
               </Link>
             ))}
-            <div className="mt-2 flex gap-2">
-              <Button variant="outline" className="flex-1" asChild>
-                <Link to="/auth/sign-in" onClick={() => setOpen(false)}>Sign in</Link>
-              </Button>
-              <Button className="flex-1 bg-gradient-primary" asChild>
-                <Link to="/auth/register" onClick={() => setOpen(false)}>Register</Link>
-              </Button>
-            </div>
+            {user ? (
+              <>
+                <Link to="/notifications" onClick={() => setOpen(false)} className="rounded-lg px-3 py-2 text-sm font-medium hover:bg-muted">Notifications{unreadCount > 0 ? ` (${unreadCount})` : ""}</Link>
+                <Link to="/profile/edit" onClick={() => setOpen(false)} className="rounded-lg px-3 py-2 text-sm font-medium hover:bg-muted">Edit profile</Link>
+                <Button variant="outline" className="mt-2" onClick={() => { setOpen(false); handleLogout(); }}>Sign out</Button>
+              </>
+            ) : (
+              <div className="mt-2 flex gap-2">
+                <Button variant="outline" className="flex-1" asChild>
+                  <Link to="/auth/sign-in" onClick={() => setOpen(false)}>Sign in</Link>
+                </Button>
+                <Button className="flex-1 bg-gradient-primary" asChild>
+                  <Link to="/auth/register" onClick={() => setOpen(false)}>Register</Link>
+                </Button>
+              </div>
+            )}
           </div>
         </div>
       )}

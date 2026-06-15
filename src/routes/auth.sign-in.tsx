@@ -1,10 +1,11 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { Heart, Mail, Lock, Eye, EyeOff } from "lucide-react";
 import { useState, type FormEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
+import { useStore } from "@/lib/store";
 
 export const Route = createFileRoute("/auth/sign-in")({
   head: () => ({ meta: [{ title: "Sign in — Sangam Matrimony" }] }),
@@ -12,25 +13,41 @@ export const Route = createFileRoute("/auth/sign-in")({
 });
 
 function SignIn() {
+  const navigate = useNavigate();
+  const { login } = useStore();
   const [show, setShow] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const { register } = useStore();
+
   const onSubmit = (e: FormEvent) => {
     e.preventDefault();
-    toast.success("Welcome back!", { description: "Sign-in demo only — connect Cloud to enable real auth." });
+    const ok = login(email, password);
+    if (ok) {
+      toast.success("Welcome back!");
+      navigate({ to: "/dashboard" });
+    } else {
+      register({ email, password, name: email.split("@")[0], gender: "female", profileFor: "self", phone: "" });
+      toast.success("Account created!", { description: "You're now signed in." });
+      navigate({ to: "/dashboard" });
+    }
   };
+
   return <AuthShell title="Welcome back" subtitle="Sign in to continue your journey." cta={{ label: "New here?", text: "Create account", to: "/auth/register" }}>
     <form onSubmit={onSubmit} className="space-y-4">
       <div className="space-y-1.5">
         <Label htmlFor="email">Email</Label>
         <div className="relative">
           <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <Input id="email" type="email" required placeholder="you@example.com" className="pl-9 h-11" />
+          <Input id="email" type="email" value={email} onChange={e => setEmail(e.target.value)} required placeholder="you@example.com" className="pl-9 h-11" />
         </div>
       </div>
       <div className="space-y-1.5">
         <Label htmlFor="password">Password</Label>
         <div className="relative">
           <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <Input id="password" type={show ? "text" : "password"} required placeholder="••••••••" className="pl-9 pr-10 h-11" />
+          <Input id="password" type={show ? "text" : "password"} value={password} onChange={e => setPassword(e.target.value)} required placeholder="••••••••" className="pl-9 pr-10 h-11" />
           <button type="button" onClick={() => setShow(s => !s)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
             {show ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
           </button>

@@ -1,20 +1,26 @@
 import { Link } from "@tanstack/react-router";
 import { Heart, Facebook, Instagram, Twitter, Youtube } from "lucide-react";
 
-type FooterLink = { label: string; to?: "/browse" | "/success-stories" | "/membership" | "/help" | "/auth/sign-in" | "/auth/register" | "/legal/privacy" | "/legal/terms" | "/legal/refund" | "/legal/cookies" | "/about" | "/contact" | "/dashboard" | "/shortlist" | "/interests" | "/chat" | "/notifications" | "/profile/create" };
+const socials = [
+  { icon: Instagram, href: "/social/instagram", label: "Instagram" },
+  { icon: Facebook, href: "/social/facebook", label: "Facebook" },
+  { icon: Twitter, href: "/social/twitter", label: "Twitter" },
+  { icon: Youtube, href: "/social/youtube", label: "Youtube" },
+] as const;
 
-const cols: { title: string; links: FooterLink[] }[] = [
-  { title: "Company", links: [{ label: "About Us", to: "/about" }, { label: "Careers" }, { label: "Press" }, { label: "Contact", to: "/contact" }] },
-  { title: "Browse", links: [{ label: "All Profiles", to: "/browse" }, { label: "Success Stories", to: "/success-stories" }, { label: "Shortlist", to: "/shortlist" }, { label: "Interests", to: "/interests" }] },
-  { title: "Account", links: [{ label: "Dashboard", to: "/dashboard" }, { label: "Messages", to: "/chat" }, { label: "Notifications", to: "/notifications" }, { label: "Membership", to: "/membership" }] },
-  { title: "Legal", links: [{ label: "Privacy Policy", to: "/legal/privacy" }, { label: "Terms & Conditions", to: "/legal/terms" }, { label: "Refund Policy", to: "/legal/refund" }, { label: "Cookies", to: "/legal/cookies" }] },
-];
+const cols = [
+  { title: "Company", links: [{ label: "About Us", to: "/about" }, { label: "Careers", to: "/careers" }, { label: "Press", to: "/press" }, { label: "Contact", to: "/contact" }] as const },
+  { title: "Support", links: [{ label: "Help Center", to: "/help" }, { label: "Contact Us", to: "/contact" }, { label: "Safety Tips", to: "/safety" }, { label: "Report Abuse", to: "/report-abuse" }] as const },
+  { title: "Browse", links: [{ label: "All Profiles", to: "/browse" }, { label: "Success Stories", to: "/success-stories" }, { label: "Shortlist", to: "/shortlist" }, { label: "Interests", to: "/interests" }] as const },
+  { title: "Account", links: [{ label: "Dashboard", to: "/dashboard" }, { label: "Messages", to: "/chat" }, { label: "Notifications", to: "/notifications" }, { label: "Membership", to: "/membership" }] as const },
+  { title: "Legal", links: [{ label: "Privacy Policy", to: "/legal/privacy" }, { label: "Terms & Conditions", to: "/legal/terms" }, { label: "Refund Policy", to: "/legal/refund" }, { label: "Cookies", to: "/legal/cookies" }] as const },
+] as const;
 
 export function Footer() {
   return (
     <footer className="border-t border-border bg-card">
       <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
-        <div className="grid gap-10 lg:grid-cols-[1.4fr_repeat(4,1fr)]">
+        <div className="grid gap-10 lg:grid-cols-[1.4fr_repeat(5,1fr)]">
           <div>
             <Link to="/" className="flex items-center gap-2">
               <span className="grid h-9 w-9 place-items-center rounded-xl bg-gradient-primary text-primary-foreground shadow-glow">
@@ -28,15 +34,15 @@ export function Footer() {
               A modern matrimonial platform built on trust, privacy, and meaningful connections.
             </p>
             <div className="mt-5 flex gap-3">
-              {[Instagram, Facebook, Twitter, Youtube].map((Icon, i) => (
-                <a
-                  key={i}
-                  href="#"
-                  aria-label="Social link"
+              {socials.map((s) => (
+                <Link
+                  key={s.label}
+                  to={s.href as any}
+                  aria-label={s.label}
                   className="grid h-9 w-9 place-items-center rounded-full border border-border text-muted-foreground transition hover:border-primary hover:text-primary"
                 >
-                  <Icon className="h-4 w-4" />
-                </a>
+                  <s.icon className="h-4 w-4" />
+                </Link>
               ))}
             </div>
           </div>
@@ -47,11 +53,7 @@ export function Footer() {
               <ul className="space-y-2.5">
                 {c.links.map((l) => (
                   <li key={l.label}>
-                    {l.to ? (
-                      <Link to={l.to} className="text-sm text-muted-foreground transition hover:text-foreground">{l.label}</Link>
-                    ) : (
-                      <a href="#" className="text-sm text-muted-foreground transition hover:text-foreground">{l.label}</a>
-                    )}
+                    <Link to={l.to} className="text-sm text-muted-foreground transition hover:text-foreground">{l.label}</Link>
                   </li>
                 ))}
               </ul>

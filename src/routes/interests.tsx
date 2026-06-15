@@ -1,32 +1,22 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Check, X, Heart, Send } from "lucide-react";
-import { useState } from "react";
 import { SiteLayout, PageHeader } from "@/components/site/SiteLayout";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ProfileImage } from "@/components/site/ProfileImage";
 import { profiles } from "@/lib/profiles";
 import { toast } from "sonner";
+import { useStore } from "@/lib/store";
 
 export const Route = createFileRoute("/interests")({
   head: () => ({ meta: [{ title: "Interests — Sangam Matrimony" }] }),
   component: Interests,
 });
 
-type Status = "pending" | "accepted" | "declined";
-type Row = { id: string; status: Status; when: string };
-
 function Interests() {
-  const [received, setReceived] = useState<Row[]>(
-    profiles.slice(0, 5).map((p, i) => ({ id: p.id, status: i === 1 ? "accepted" : "pending", when: ["2 min ago", "1 hr ago", "Yesterday", "2 days ago", "Last week"][i] }))
-  );
-  const sent: Row[] = profiles.slice(5, 10).map((p, i) => ({
-    id: p.id, status: (["pending", "accepted", "pending", "declined", "accepted"] as Status[])[i], when: ["Today", "Yesterday", "2 days ago", "3 days ago", "Last week"][i],
-  }));
-
-  const respond = (id: string, status: Status) => {
-    setReceived((rs) => rs.map((r) => (r.id === id ? { ...r, status } : r)));
-    toast.success(status === "accepted" ? "Interest accepted" : "Interest declined");
-  };
+  const { state: { interests, user }, respondToInterest } = useStore();
+  const sent = interests.filter(i => i.fromUserId === user?.id);
+  const received = interests.filter(i => i.toUserId === user?.id);
 
   return (
     <SiteLayout>
@@ -39,32 +29,42 @@ function Interests() {
           </TabsList>
 
           <TabsContent value="received" className="mt-6 space-y-3">
-            {received.map((r) => {
-              const p = profiles.find((x) => x.id === r.id)!;
+            {received.length === 0 ? (
+              <div className="rounded-2xl border border-dashed border-border bg-card p-12 text-center">
+                <p className="font-display text-lg font-semibold">No interests received yet</p>
+                <p className="mt-1 text-sm text-muted-foreground">Complete your profile to get discovered.</p>
+              </div>
+            ) : received.map((r) => {
+              const p = profiles.find((x) => x.id === r.fromUserId)!;
               return (
                 <article key={r.id} className="flex flex-col gap-4 rounded-2xl border border-border bg-card p-4 shadow-soft sm:flex-row sm:items-center">
-                  <img src={p.image} alt={p.name} loading="lazy" className="h-20 w-20 rounded-xl object-cover" />
+                  <ProfileImage src={p?.image} name={p?.name ?? ""} className="h-20 w-20 rounded-xl object-cover" />
                   <div className="flex-1">
                     <div className="flex items-center gap-2">
-                      <p className="font-display text-lg font-bold">{p.name}, {p.age}</p>
+                      <p className="font-display text-lg font-bold">{p?.name ?? "Unknown"}, {p?.age}</p>
                       <StatusBadge status={r.status} />
                     </div>
-                    <p className="text-sm text-muted-foreground">{p.profession} • {p.city}</p>
-                    <p className="text-xs text-muted-foreground">Sent {r.when}</p>
+                    <p className="text-sm text-muted-foreground">{p?.profession} • {p?.city}</p>
+                    <p className="text-xs text-muted-foreground">{new Date(r.createdAt).toLocaleDateString()}</p>
                   </div>
                   {r.status === "pending" ? (
                     <div className="flex gap-2">
-                      <Button size="sm" className="bg-gradient-primary shadow-glow" onClick={() => respond(r.id, "accepted")}>
+                      <Button size="sm" className="bg-gradient-primary shadow-glow" onClick={() => { respondToInterest(r.id, "accepted"); toast.success("Interest accepted"); }}>
                         <Check className="mr-1.5 h-4 w-4" /> Accept
                       </Button>
-                      <Button size="sm" variant="outline" onClick={() => respond(r.id, "declined")}>
+                      <Button size="sm" variant="outline" onClick={() => { respondToInterest(r.id, "declined"); toast.success("Interest declined"); }}>
                         <X className="mr-1.5 h-4 w-4" /> Decline
                       </Button>
                     </div>
                   ) : (
-                    <Button asChild size="sm" variant="outline">
-                      <Link to="/profile/$id" params={{ id: r.id }}>View profile</Link>
-                    </Button>
+                    <div className="flex gap-2">
+                      <Button asChild size="sm" variant="outline">
+                        <Link to={`/chat?userId=${r.fromUserId}`}><Send className="mr-1 h-3 w-3" /> Message</Link>
+                      </Button>
+                      <Button asChild size="sm" variant="outline">
+                        <Link to="/profile/$id" params={{ id: r.fromUserId }}>View profile</Link>
+                      </Button>
+                    </div>
                   )}
                 </article>
               );
@@ -72,21 +72,26 @@ function Interests() {
           </TabsContent>
 
           <TabsContent value="sent" className="mt-6 space-y-3">
-            {sent.map((r) => {
-              const p = profiles.find((x) => x.id === r.id)!;
+            {sent.length === 0 ? (
+              <div className="rounded-2xl border border-dashed border-border bg-card p-12 text-center">
+                <p className="font-display text-lg font-semibold">No interests sent yet</p>
+                <p className="mt-1 text-sm text-muted-foreground">Browse profiles and send interests to start connecting.</p>
+              </div>
+            ) : sent.map((r) => {
+              const p = profiles.find((x) => x.id === r.toUserId)!;
               return (
                 <article key={r.id} className="flex flex-col gap-4 rounded-2xl border border-border bg-card p-4 shadow-soft sm:flex-row sm:items-center">
-                  <img src={p.image} alt={p.name} loading="lazy" className="h-20 w-20 rounded-xl object-cover" />
+                  <ProfileImage src={p?.image} name={p?.name ?? ""} className="h-20 w-20 rounded-xl object-cover" />
                   <div className="flex-1">
                     <div className="flex items-center gap-2">
-                      <p className="font-display text-lg font-bold">{p.name}, {p.age}</p>
+                      <p className="font-display text-lg font-bold">{p?.name ?? "Unknown"}, {p?.age}</p>
                       <StatusBadge status={r.status} />
                     </div>
-                    <p className="text-sm text-muted-foreground">{p.profession} • {p.city}</p>
-                    <p className="text-xs text-muted-foreground">Sent {r.when}</p>
+                    <p className="text-sm text-muted-foreground">{p?.profession} • {p?.city}</p>
+                    <p className="text-xs text-muted-foreground">{new Date(r.createdAt).toLocaleDateString()}</p>
                   </div>
                   <Button asChild size="sm" variant="outline">
-                    <Link to="/profile/$id" params={{ id: r.id }}>View profile</Link>
+                    <Link to="/profile/$id" params={{ id: r.toUserId }}>View profile</Link>
                   </Button>
                 </article>
               );
@@ -113,7 +118,7 @@ function Interests() {
   );
 }
 
-function StatusBadge({ status }: { status: Status }) {
+function StatusBadge({ status }: { status: string }) {
   const cls =
     status === "accepted"
       ? "bg-primary-soft text-primary"

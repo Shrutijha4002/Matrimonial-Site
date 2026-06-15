@@ -40,12 +40,12 @@ function VerifyOtp() {
   return (
     <AuthShell
       title="Verify your number"
-      subtitle="We sent a 6-digit code to your registered email and phone."
+      subtitle="We sent a 6-digit code to your registered email."
       cta={{ label: "Didn't get it?", text: "Resend code", to: "/auth/verify-otp" }}
     >
       <form onSubmit={onSubmit} className="space-y-6">
         <div className="flex items-center gap-2 rounded-xl bg-primary-soft/40 p-3 text-xs text-foreground">
-          <ShieldCheck className="h-4 w-4 text-primary" /> Codes expire in 10 minutes for your security.
+          <ShieldCheck className="h-4 w-4 shrink-0 text-primary" /> A 6-digit code was sent to your email.
         </div>
         <div className="flex justify-between gap-2">
           {digits.map((d, i) => (

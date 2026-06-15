@@ -1,9 +1,12 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { BadgeCheck, Briefcase, ChevronLeft, Crown, GraduationCap, Heart, Languages, MapPin, MessageCircle, Phone, Ruler, Share2, Wallet } from "lucide-react";
+import { BadgeCheck, Briefcase, ChevronLeft, Crown, GraduationCap, Heart, Languages, MapPin, MessageCircle, Phone, Ruler, Send, Share2, Wallet } from "lucide-react";
 import { SiteLayout } from "@/components/site/SiteLayout";
+import { ProfileImage } from "@/components/site/ProfileImage";
 import { ProfileCard } from "@/components/site/ProfileCard";
 import { Button } from "@/components/ui/button";
 import { getProfile, profiles } from "@/lib/profiles";
+import { useStore } from "@/lib/store";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/profile/$id")({
   loader: ({ params }) => {
@@ -31,6 +34,8 @@ export const Route = createFileRoute("/profile/$id")({
 function ProfilePage() {
   const { profile: p } = Route.useLoaderData();
   const similar = profiles.filter((x) => x.id !== p.id).slice(0, 3);
+  const { sendInterest, toggleShortlist, isShortlisted, state: { user } } = useStore();
+  const shortlisted = isShortlisted(p.id);
 
   const facts = [
     { icon: Ruler, label: "Height", value: p.height },
@@ -55,7 +60,7 @@ function ProfilePage() {
         <div className="grid gap-8 lg:grid-cols-[420px_1fr]">
           <div>
             <div className="relative overflow-hidden rounded-3xl border border-border bg-card shadow-elegant">
-              <img src={p.image} alt={p.name} className="aspect-[4/5] w-full object-cover" />
+              <ProfileImage src={p.image} name={p.name} className="aspect-[4/5] w-full object-cover" />
               <div className="absolute left-3 top-3 flex flex-col gap-2">
                 {p.premium && (
                   <span className="inline-flex items-center gap-1 rounded-full bg-accent px-2.5 py-1 text-[11px] font-bold uppercase text-accent-foreground">
@@ -69,10 +74,13 @@ function ProfilePage() {
                 )}
               </div>
             </div>
-            <div className="mt-4 grid grid-cols-3 gap-2">
-              <Button className="bg-gradient-primary hover:opacity-95"><Heart className="mr-1 h-4 w-4" /> Shortlist</Button>
-              <Button variant="outline"><MessageCircle className="mr-1 h-4 w-4" /> Chat</Button>
-              <Button variant="outline"><Share2 className="mr-1 h-4 w-4" /> Share</Button>
+            <div className="mt-4 grid grid-cols-4 gap-2">
+              <Button className={`hover:opacity-95 ${shortlisted ? "bg-muted text-muted-foreground" : "bg-gradient-primary"}`} onClick={() => { toggleShortlist(p.id); toast.success(shortlisted ? "Removed from shortlist" : "Shortlisted!"); }}>
+                <Heart className={`mr-1 h-4 w-4 ${shortlisted ? "fill-current" : ""}`} /> Save
+              </Button>
+              <Button variant="outline" onClick={() => { sendInterest(p.id); toast.success("Interest sent!"); }}><MessageCircle className="mr-1 h-4 w-4" /> Interest</Button>
+              <Button variant="outline" asChild><Link to={`/chat?userId=${p.id}`}><Send className="mr-1 h-4 w-4" /> Message</Link></Button>
+              <Button variant="outline" onClick={() => { navigator.clipboard.writeText(window.location.href); toast.success("Link copied!"); }}><Share2 className="mr-1 h-4 w-4" /> Share</Button>
             </div>
           </div>
 
